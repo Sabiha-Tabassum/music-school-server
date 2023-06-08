@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
 require('dotenv').config();
@@ -8,6 +9,29 @@ const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+
+
+// verify jwt
+
+const verifyJWT = (req, res, next) => {
+  const authorization = req.headers.authorization;
+  console.log(authorization)
+  if(!authorization){
+    return res.status(401).send({error: true, message: 'unauthorized access'})
+  }
+
+  const token = authorization.split(' ')[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if(err){
+      return res.status(401).send({error: true, message: 'unauthorized access'})
+    }
+    req.decoded = decoded;
+    next();
+  })
+}
+
+
 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -29,6 +53,16 @@ async function run() {
 
     const userCollection = client.db("musicDB").collection("user");
     const classCollection = client.db("musicDB").collection("class");
+
+    // post jwt token 
+
+    app.post('/jwt', (req,res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+       expiresIn: '1h'
+      })
+      res.send({token})
+   })
     
     // get user
 
