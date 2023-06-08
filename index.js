@@ -85,7 +85,7 @@ async function run() {
 
   })
 
-  // get admin user email 
+  // get admin  email for UseAdmin
 
   app.get('/user/admin/:email',  async(req, res) => {
     const email = req.params.email;
@@ -93,6 +93,19 @@ async function run() {
     const query = {email: email}
     const user = await userCollection.findOne(query);
     const result = { admin: user?.role === 'Admin'}
+    res.send(result);
+
+  })
+
+
+  // get instructor email for UseInstructor
+
+  app.get('/user/instructor/:email',  async(req, res) => {
+    const email = req.params.email;
+
+    const query = {email: email}
+    const user = await userCollection.findOne(query);
+    const result = { instructor: user?.role === 'Instructor'}
     res.send(result);
 
   })
