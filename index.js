@@ -28,6 +28,7 @@ async function run() {
     await client.connect();
 
     const userCollection = client.db("musicDB").collection("user");
+    const classCollection = client.db("musicDB").collection("class");
     
     // get user
 
@@ -111,8 +112,15 @@ async function run() {
   })
 
 
-  
-  
+  // add class to DB
+
+  app.post('/class', async(req, res) => {
+       const newClass = req.body;
+       const result = await classCollection.insertOne(newClass);
+       res.send(result);
+  })
+
+
 
 
     // Send a ping to confirm a successful connection
