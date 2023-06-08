@@ -29,6 +29,12 @@ async function run() {
 
     const userCollection = client.db("musicDB").collection("user");
     
+    // get user
+
+    app.get('/user', async(req, res) => {
+      const result = await userCollection.find().toArray();
+      res.send(result);
+    })
 
     // post user
     app.post('/user', async(req, res) => {
@@ -49,7 +55,7 @@ async function run() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
