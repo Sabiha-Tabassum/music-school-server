@@ -69,9 +69,22 @@ async function run() {
   })
 
   // update user instructor
+
   app.patch('/user/instructor/:id', async(req, res) => {
     const id = req.params.id;
-    const filter = { _id: new ObjectId(id) };})
+    const filter = { _id: new ObjectId(id) };
+    const updateDoc = {
+      $set: {
+        role: 'Instructor'
+      },
+    };
+
+    const result = await userCollection.updateOne(filter, updateDoc);
+    res.send(result);
+
+
+})
+  
 
 
     // Send a ping to confirm a successful connection
