@@ -53,6 +53,7 @@ async function run() {
 
     const userCollection = client.db("musicDB").collection("user");
     const classCollection = client.db("musicDB").collection("class");
+    const myClassCollection = client.db("musicDB").collection("myclass");
 
     // post jwt token 
 
@@ -215,7 +216,58 @@ async function run() {
 
     })
 
+    // deny feedback update
 
+    app.patch('/class/denyFeedback/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          feedback: 'This class is not opening yet'
+        },
+      };
+
+      const result = await classCollection.updateOne(filter, updateDoc);
+      res.send(result);
+
+
+    })
+
+    // approve feedback update
+
+    app.patch('/class/approveFeedback/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          feedback: 'This class is going on successfully'
+        },
+      };
+
+      const result = await classCollection.updateOne(filter, updateDoc);
+      res.send(result);
+
+
+    })
+
+
+   // my class post
+
+   app.post('/myclass', async (req, res) => {
+    const myClass = req.body;
+
+    console.log(myClass);
+
+
+    const result = await myClassCollection.insertOne(myClass);
+    res.send(result);
+  })
+
+   
+  // get my class
+
+ 
+   
 
 
 
