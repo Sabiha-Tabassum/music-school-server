@@ -63,10 +63,23 @@ async function run() {
       })
       res.send({token})
    })
+
+   // verify admin
+
+    const verifyAdmin = async(req,res,next) => {
+    const email = req.decoded.email;
+    const query = {email: email}
+    const user = await userCollection.findOne(query);
+    if(user?.role !== 'Admin'){
+      return res.status(403).send({error: true, message: 'forbidden message'});
+    }
+    next();
+  }
+
     
     // get user
 
-    app.get('/user', async(req, res) => {
+    app.get('/user',  async(req, res) => {
       const result = await userCollection.find().toArray();
       res.send(result);
     })
@@ -125,6 +138,8 @@ async function run() {
   app.get('/user/admin/:email',  async(req, res) => {
     const email = req.params.email;
 
+    
+
     const query = {email: email}
     const user = await userCollection.findOne(query);
     const result = { admin: user?.role === 'Admin'}
@@ -137,6 +152,9 @@ async function run() {
 
   app.get('/user/instructor/:email',  async(req, res) => {
     const email = req.params.email;
+    console.log(email)
+
+    
 
     const query = {email: email}
     const user = await userCollection.findOne(query);
@@ -152,6 +170,11 @@ async function run() {
        const newClass = req.body;
        const result = await classCollection.insertOne(newClass);
        res.send(result);
+  })
+
+  app.get('/class',  async(req, res) => {
+    const result = await classCollection.find().toArray();
+    res.send(result);
   })
 
 
