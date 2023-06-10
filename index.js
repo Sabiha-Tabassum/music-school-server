@@ -55,6 +55,8 @@ async function run() {
     const classCollection = client.db("musicDB").collection("class");
     const myClassCollection = client.db("musicDB").collection("myclass");
 
+    // const totalEnrollCollection = client.db("musicDB").collection("totalenroll");
+
     // post jwt token 
 
     app.post('/jwt', (req, res) => {
@@ -270,6 +272,27 @@ async function run() {
     const result = await myClassCollection.find().toArray();
     res.send(result);
   })
+
+  // myclass delete 
+
+  app.delete('/myclass/:id', async(req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id)}
+    const result = await myClassCollection.deleteOne(query);
+    res.send(result);
+  })
+
+  // total enroll post
+
+  // app.post('/totalenroll', async (req, res) => {
+  //   const totalEnroll = req.body;
+
+  //   console.log(totalEnroll);
+
+
+  //   const result = await totalEnrollCollection.insertOne(totalEnroll);
+  //   res.send(result);
+  // })
    
 
 
