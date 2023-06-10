@@ -1,11 +1,13 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+
+
 const jwt = require('jsonwebtoken');
-const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY)
+
 require('dotenv').config()
 
-require('dotenv').config();
+const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY)
 
 const port = process.env.PORT || 5000;
 
@@ -56,6 +58,7 @@ async function run() {
     const userCollection = client.db("musicDB").collection("user");
     const classCollection = client.db("musicDB").collection("class");
     const myClassCollection = client.db("musicDB").collection("myclass");
+    const paymentCollection = client.db("musicDB").collection("payment");
 
     // const totalEnrollCollection = client.db("musicDB").collection("totalenroll");
 
@@ -285,6 +288,9 @@ async function run() {
   })
 
 
+
+  // get myclass data according to id
+
   app.get('/myclass/:id', async(req, res) => {
     const id = req.params.id;
     const query = { _id: new ObjectId(id)}
@@ -296,7 +302,7 @@ async function run() {
 
    // create payment intent
 
-   app.post('/create-payment-intent', verifyJWT,  async(req, res) => {
+   app.post('/create-payment-intent',  async(req, res) => {
     const {price} = req.body;
     const amount = price * 100;
     console.log(price, amount);
@@ -308,6 +314,16 @@ async function run() {
     res.send({
       clientSecret: paymentIntent.client_secret
     })
+  })
+
+
+
+  // payment api 
+
+  app.post('/payment', async(req, res) => {
+    const payment = req.body;
+    const result = await paymentCollection.insertOne(payment);
+    res.send(result);
   })
 
   // total enroll post
